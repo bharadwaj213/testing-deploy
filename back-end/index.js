@@ -14,10 +14,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// app.get("/", async (req, res) => {
-//   const forms = await Form.find({});
-//   res.json(forms);
-// });
+app.get("/", async (req, res) => {
+  const forms = await Form.find({});
+  res.json(forms);
+});
 
 /* app.get("/createNewForm", async (req, res) => {
   const formID = randomstring.generate(7);
