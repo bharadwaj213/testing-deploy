@@ -5,12 +5,16 @@ import SAQuestion from "./SAQuestion";
 
 function Question({ handleDeleteQuestion, id, content, updateQuestion }) {
   const [questionType, setQuestionType] = useState(content.questionType);
-
+  console.log("Displaying options from content", content.options);
   return (
     <div className="form-question">
       <div className="form-question-inner">
         {questionType == 1 && (
-          <MCQuestion content={content} updateQuestion={updateQuestion} />
+          <MCQuestion
+            content={content}
+            optionsp={content.options}
+            updateQuestion={updateQuestion}
+          />
         )}
         {questionType == 2 && (
           <SAQuestion content={content} updateQuestion={updateQuestion} />
@@ -37,7 +41,10 @@ function Question({ handleDeleteQuestion, id, content, updateQuestion }) {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Select Question Type
+                {/* Select Question Type */}
+                {questionType == 1
+                  ? "Multiple Choice Question"
+                  : "Short Answer Question"}
               </button>
               <ul className="dropdown-menu">
                 <li>

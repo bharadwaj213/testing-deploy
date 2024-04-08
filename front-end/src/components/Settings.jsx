@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import GroupListItem from "./GroupListItem";
 import { useNavigate } from "react-router-dom";
 
@@ -8,36 +9,87 @@ function Settings({
   handleAddFormGroup,
 }) {
   const navigate = useNavigate();
+  const [formIsAcceptingResponses, setFormIsAcceptingResponses] =
+    useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        `/api/admin/getFormIsAcceptingResponses/${localStorage.getItem(
+          "formID"
+        )}`,
+        // `http://localhost:3000/getFormIsAcceptingResponses/${localStorage.getItem("formID")}`,
+        {
+          method: "GET",
+        }
+      );
+      const json = await response.json();
+      console.log(json);
+      setFormIsAcceptingResponses(json.formIsAcceptingResponses);
+    };
+    fetchData();
+  }, []);
 
   const handleDeleteForm = async () => {
     const id = localStorage.getItem("formID");
-    const response = await fetch("http://localhost:3000/deleteForm", {
-      method: "PUT",
-      body: JSON.stringify({
-        formID: id,
-      }),
-      headers: { "Content-Type": "application/json" },
+
+    const response = await fetch(`/api/admin/deleteForm/${id}`, {
+      method: "DELETE",
     });
     const json = await response.json();
-    // if (response.ok) {
-    //   console.log(json);
-    //   setAllFormTitlesIDs((titles) => {
-    //     const newTitles = titles.filter((t) => t.formID !== id);
-    //     return newTitles;
-    //   });
-    //   console.log(allFormTitlesIDs);
-    // } else console.log(json);
     console.log(json);
     localStorage.removeItem("formID");
     navigate("/");
   };
 
+  const handleFormIsAcceptingResponses = async (formIsAcceptingResponses) => {
+    setFormIsAcceptingResponses(formIsAcceptingResponses);
+    const id = localStorage.getItem("formID");
+    const response = await fetch(
+      `/api/admin/setIsAcceptingResponses`,
+      //`http://localhost:3000/setIsAcceptingResponses`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          formID: id,
+          formIsAcceptingResponses: formIsAcceptingResponses,
+        }),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    const json = await response.json();
+    console.log(json);
+  };
+
   return (
     <div className="settings-page">
-      <div className="delete-form-button-settings">
-        <button className="btn btn-primary" onClick={() => handleDeleteForm()}>
-          Delete form
-        </button>
+      <div className="delete-form-settings">
+        <div className="delete-form-button-settings">
+          <button
+            className="btn btn-danger delete-form-btn"
+            onClick={() => handleDeleteForm()}
+          >
+            Delete form
+          </button>
+        </div>
+        <div className="responses-off-div">
+          <div className="form-check form-switch">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="flexSwitchCheckChecked"
+              onChange={(e) => handleFormIsAcceptingResponses(e.target.checked)}
+              checked={formIsAcceptingResponses}
+            />
+            <label
+              className="form-check-label"
+              htmlFor="flexSwitchCheckChecked"
+            >
+              Accepting responses
+            </label>
+          </div>
+        </div>
       </div>
       <div className="all-groups">
         <div className="add-new-group">

@@ -3,6 +3,7 @@ import logo from "../assets/logo.svg";
 import FormTitleDescription from "./FormTitleDescription";
 import Question from "./Question";
 import Settings from "./Settings";
+import Dashboard from "./Dashboard";
 
 function Form() {
   const [questions, setQuestions] = useState([
@@ -10,7 +11,9 @@ function Form() {
       questionID: Math.floor(Math.random() * 9000) + 1000,
       questionType: 1,
       question: "",
-      options: [],
+      options: [
+        { optionID: Math.floor(Math.random() * 9000) + 1000, optionValue: "" },
+      ],
     },
   ]);
   const [formTitle, setFormTitle] = useState("");
@@ -20,7 +23,9 @@ function Form() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `http://localhost:3000/getFormData/${localStorage.getItem("formID")}`,
+        `/api/admin/getFormData/${localStorage.getItem("formID")}`,
+
+        //`http://localhost:3000/getFormData/${localStorage.getItem("formID")}`,
         {
           method: "GET",
         }
@@ -34,7 +39,6 @@ function Form() {
         setQuestions(json.form.formQuestions);
     };
     fetchData();
-    console.log(formGroups);
   }, []);
 
   const storeTitleDescription = (arr) => {
@@ -69,7 +73,12 @@ function Form() {
         questionID: Math.floor(Math.random() * 9000) + 1000,
         questionType: 1,
         question: "",
-        options: [],
+        options: [
+          {
+            optionID: Math.floor(Math.random() * 9000) + 1000,
+            optionValue: "",
+          },
+        ],
       },
     ]);
   };
@@ -97,39 +106,41 @@ function Form() {
 
   const handleAddFormGroup = async () => {
     const id = localStorage.getItem("formID");
-    const response = await fetch("http://localhost:3000/createNewFormGroup/", {
-      method: "POST",
-      body: JSON.stringify({
-        formID: id,
-        formGroups: formGroups,
-      }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const json = await response.json();
-    console.log(json);
-    const response2 = await fetch(
-      `http://localhost:3000/getFormData/${localStorage.getItem("formID")}`,
+    const response = await fetch(
+      `/api/admin/createNewFormGroup/${id}`,
+      //`http://localhost:3000/createNewFormGroup/${id}`,
       {
         method: "GET",
+        // body: JSON.stringify({
+        //   formID: id,
+        //   formGroups: formGroups,
+        // }),
+        // headers: { "Content-Type": "application/json" },
       }
     );
-    const json2 = await response2.json();
-    setFormGroups(json2.form.formGroups);
+    const json = await response.json();
+    const newGroup = json.formGroup;
+    console.log(json);
+    setFormGroups((oldGroups) => [...oldGroups, newGroup]);
   };
 
   const handleSave = async () => {
     const id = localStorage.getItem("formID");
-    const response = await fetch("http://localhost:3000/updateForm", {
-      method: "PUT",
-      body: JSON.stringify({
-        formID: id,
-        formTitle: formTitle,
-        formDescription: formDescription,
-        formQuestions: questions,
-        formGroups: formGroups,
-      }),
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await fetch(
+      `/api/admin/updateForm`,
+      //"http://localhost:3000/updateForm"
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          formID: id,
+          formTitle: formTitle,
+          formDescription: formDescription,
+          formQuestions: questions,
+          formGroups: formGroups,
+        }),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
     const json = await response.json();
     console.log(json);
     alert("Form Saved !");
@@ -195,7 +206,10 @@ function Form() {
               Settings
             </button>
           </li>
-          <button className="btn btn-primary" onClick={handleSave}>
+          <button
+            className="btn btn-primary save-form-btn"
+            onClick={handleSave}
+          >
             Save
           </button>
         </ul>
@@ -207,7 +221,7 @@ function Form() {
             aria-labelledby="questions-tab"
             tabIndex="0"
           >
-            <section>
+            <div className="form-questions-tab">
               <FormTitleDescription
                 store={storeTitleDescription}
                 formContent={[formTitle, formDescription]}
@@ -226,7 +240,7 @@ function Form() {
                   updateQuestion={updateQuestion}
                 />
               ))}
-            </section>
+            </div>
           </div>
           <div
             className="tab-pane fade"
@@ -235,7 +249,7 @@ function Form() {
             aria-labelledby="dasboard-tab"
             tabIndex="0"
           >
-            ...
+            <Dashboard />
           </div>
           <div
             className="tab-pane fade"

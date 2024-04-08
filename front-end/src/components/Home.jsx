@@ -10,12 +10,9 @@ function Home() {
   useEffect(() => {
     localStorage.removeItem("formID");
     const fetchData = async () => {
-      const response = await fetch(
-        "http://localhost:3000/getAllFormTitlesIDs",
-        {
-          method: "GET",
-        }
-      );
+      const response = await fetch("/api/admin/getAllFormTitlesIDs", {
+        method: "GET",
+      });
       const json = await response.json();
       console.log(json);
       setAllFormTitlesIDs(json.allFormTitlesIDs);
@@ -24,28 +21,21 @@ function Home() {
   }, []);
 
   const handleCreateNewForm = async () => {
-    const response = await fetch("http://localhost:3000/createNewForm", {
-      method: "POST",
-      body: JSON.stringify({
-        formTitle: "",
-        formDescription: "",
-        formQuestions: [],
-      }),
+    const response = await fetch("/api/admin/createNewForm", {
+      //const response = await fetch("http://localhost:3000/createNewForm", {
+      method: "GET",
     });
     const json = await response.json();
     console.log(json);
-    localStorage.setItem("formID", json.formID);
-    navigate(`/form/${json.formID}`);
+    localStorage.setItem("formID", json.form.formID);
+    navigate(`/form/${json.form.formID}`);
   };
 
   const handleDeleteFormListItem = async (id) => {
     localStorage.removeItem("formID");
-    const response = await fetch("http://localhost:3000/deleteForm", {
-      method: "PUT",
-      body: JSON.stringify({
-        formID: id,
-      }),
-      headers: { "Content-Type": "application/json" },
+    //const response = await fetch(`http://localhost:3000/deleteForm/${id}`, {
+    const response = await fetch(`/api/admin/deleteForm/${id}`, {
+      method: "DELETE",
     });
     const json = await response.json();
     if (response.ok) {
@@ -75,9 +65,11 @@ function Home() {
         </div>
       </nav>
       <section className="create-new-form">
-        <button className="btn btn-primary" onClick={handleCreateNewForm}>
-          Create new form
-        </button>
+        <div className="create-new-form-div">
+          <button className="btn btn-primary" onClick={handleCreateNewForm}>
+            Create new form
+          </button>
+        </div>
         {/* <Link
           to={`/form/${localStorage.getItem("formID")}`}
           className="btn btn-primary marbtn"

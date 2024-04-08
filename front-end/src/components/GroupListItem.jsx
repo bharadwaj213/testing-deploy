@@ -15,6 +15,7 @@ function GroupListItem({ content, updateFormGroup, handleDeleteFormGroup }) {
       <div className="group-name-list-item">
         <input
           type="text"
+          className="form-control"
           value={content.groupName}
           onChange={handleOnChangeUpdateForm}
         />
