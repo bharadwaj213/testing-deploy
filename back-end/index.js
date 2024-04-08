@@ -1,5 +1,6 @@
 import express from "express";
 import randomstring from "randomstring";
+import cors from "cors";
 
 const PORT = 3000;
 const app = express();
@@ -7,6 +8,7 @@ const app = express();
 let formsData = [];
 
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.json(formsData);
@@ -24,7 +26,8 @@ app.post("/createNewForm", (req, res) => {
     questions: questions,
     responses: [],
   });
-  res.json(formsData);
+  console.log(formsData);
+  res.sendStatus(200);
 });
 
 app.get("/getAllFormTitles", (req, res) => {
@@ -33,7 +36,6 @@ app.get("/getAllFormTitles", (req, res) => {
 });
 
 app.put("/deleteForm", (req, res) => {
-  //req has form ID in body
   const id = req.body.id;
   formsData = formsData.filter((form) => form.id != id);
   res.json({ msg: "Form deleted." });

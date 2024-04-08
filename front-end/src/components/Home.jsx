@@ -1,4 +1,4 @@
-import logo from "../assets/notepad-sheet-svgrepo-com.svg";
+import logo from "../assets/logo.svg";
 import { Link } from "react-router-dom";
 
 function Home() {
