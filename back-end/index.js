@@ -1,21 +1,25 @@
 import express from "express";
-import randomstring from "randomstring";
+
 import cors from "cors";
 import mongoose from "mongoose";
 import Form from "./models/formModel.js";
+import "dotenv/config.js";
+import userRouter from "./routes/user.route.js";
+import adminRouter from "./routes/admin.route.js";
 
-const PORT = 3000;
+const PORT = process.env.PORT;
+const CLIENT_BASE_URL = process.env.CLIENT_BASE_URL;
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.get("/", async (req, res) => {
-  const forms = await Form.find({});
-  res.json(forms);
-});
+// app.get("/", async (req, res) => {
+//   const forms = await Form.find({});
+//   res.json(forms);
+// });
 
-app.get("/createNewForm", async (req, res) => {
+/* app.get("/createNewForm", async (req, res) => {
   const formID = randomstring.generate(7);
   const formTitle = "";
   const formDescription = "";
@@ -26,9 +30,10 @@ app.get("/createNewForm", async (req, res) => {
     {
       groupID: defaultGroupID,
       groupName: "",
-      groupLink: `http://localhost:5173/userform/${formID}/${defaultGroupID}`,
+      groupLink: `${CLIENT_BASE_URL}/userform/${formID}/${defaultGroupID}`,
     },
   ];
+  const formIsAcceptingResponses = true;
   try {
     const form = await Form.create({
       formID: formID,
@@ -37,6 +42,7 @@ app.get("/createNewForm", async (req, res) => {
       formQuestions: formQuestions,
       formResponses: formResponses,
       formGroups: formGroups,
+      formIsAcceptingResponses: formIsAcceptingResponses,
     });
     console.log(form);
     res.status(200).json({ msg: "Form created.", form: form });
@@ -45,9 +51,16 @@ app.get("/createNewForm", async (req, res) => {
       .status(500)
       .json({ msg: "Form creation failed !", errorMsg: error.message });
   }
+}); */
+
+app.use("/api/admin", adminRouter);
+app.use("/api/user", userRouter);
+
+app.get("/tests", (req, res) => {
+  res.send("Test route is working!");
 });
 
-app.get("/getAllFormTitlesIDs", async (req, res) => {
+/* app.get("/getAllFormTitlesIDs", async (req, res) => {
   try {
     const allFormTitlesIDs = await Form.find(
       {},
@@ -60,9 +73,9 @@ app.get("/getAllFormTitlesIDs", async (req, res) => {
       .status(500)
       .json({ msg: "See error message !", errorMsg: error.message });
   }
-});
+}); */
 
-app.delete("/deleteForm/:id", async (req, res) => {
+/* app.delete("/deleteForm/:id", async (req, res) => {
   try {
     const result = await Form.deleteOne({ formID: req.params.id });
     console.log(result);
@@ -75,8 +88,8 @@ app.delete("/deleteForm/:id", async (req, res) => {
       .json({ msg: "See error message !", errorMsg: error.message });
   }
 });
-
-app.get("/getFormData/:id", async (req, res) => {
+ */
+/* app.get("/getFormData/:id", async (req, res) => {
   try {
     const form = await Form.findOne({ formID: req.params.id });
     console.log(form);
@@ -87,9 +100,9 @@ app.get("/getFormData/:id", async (req, res) => {
       .status(500)
       .json({ msg: "See error message !", errorMsg: error.message });
   }
-});
+}); */
 
-app.put("/updateForm", async (req, res) => {
+/* app.put("/updateForm", async (req, res) => {
   try {
     const updatedForm = {
       $set: {
@@ -112,9 +125,9 @@ app.put("/updateForm", async (req, res) => {
       .status(500)
       .json({ msg: "See error message !", errorMsg: error.message });
   }
-});
+}); */
 
-app.get("/createNewFormGroup/:id", async (req, res) => {
+/* app.get("/createNewFormGroup/:id", async (req, res) => {
   try {
     const formGroupsObj = await Form.findOne(
       { formID: req.params.id },
@@ -125,7 +138,7 @@ app.get("/createNewFormGroup/:id", async (req, res) => {
     formGroups.push({
       groupID: defaultGroupID,
       groupName: "",
-      groupLink: `http://localhost:5173/userform/${req.params.id}/${defaultGroupID}`,
+      groupLink: `${CLIENT_BASE_URL}/userform/${req.params.id}/${defaultGroupID}`,
     });
     const updatedForm = {
       $set: {
@@ -142,9 +155,9 @@ app.get("/createNewFormGroup/:id", async (req, res) => {
       .status(500)
       .json({ msg: "See error message !", errorMsg: error.message });
   }
-});
+}); */
 
-app.post("/saveUserFormResponse", async (req, res) => {
+/* app.post("/saveUserFormResponse", async (req, res) => {
   try {
     const formResponsesObj = await Form.findOne(
       { formID: req.body.formID },
@@ -170,9 +183,9 @@ app.post("/saveUserFormResponse", async (req, res) => {
       .status(500)
       .json({ msg: "See error message !", errorMsg: error.message });
   }
-});
+}); */
 
-app.get("/getSummaryDashboardData/:id", async (req, res) => {
+/* app.get("/getSummaryDashboardData/:id", async (req, res) => {
   try {
     const form = await Form.findOne({ formID: req.params.id });
     if (form) {
@@ -213,15 +226,20 @@ app.get("/getSummaryDashboardData/:id", async (req, res) => {
         const totalData = {
           question: q.question,
           questionType: q.questionType,
-          options: q.options,
           norQuestion: norQuestion,
           subData: subData,
         };
+        if (q.questionType === 1) {
+          totalData.options = q.options;
+        }
         summaryData.push(totalData);
       });
       res.status(200).json({
         summaryData: summaryData,
         numberOfResponses: numberOfResponses,
+        formGroups: form.formGroups,
+        formResponses: form.formResponses,
+        formQuestions: form.formQuestions,
         msg: "Summary Data and number of responses sent.",
       });
     } else res.status(404).json({ msg: "Form not found." });
@@ -230,12 +248,48 @@ app.get("/getSummaryDashboardData/:id", async (req, res) => {
       .status(500)
       .json({ msg: "See error message !", errorMsg: error.message });
   }
-});
+}); */
 
+/* app.post("/setIsAcceptingResponses", async (req, res) => {
+  try {
+    const updatedForm = {
+      $set: {
+        formIsAcceptingResponses: req.body.formIsAcceptingResponses,
+      },
+    };
+    const result = await Form.updateOne(
+      { formID: req.body.formID },
+      updatedForm
+    );
+    console.log(result);
+    if (result.modifiedCount === 1)
+      res.status(200).json({ msg: "Updated FormIsAcceptingResponses." });
+    else res.status(404).json({ msg: "Form not found." });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "See error message !", errorMsg: error.message });
+  }
+}); */
+
+/* app.get("/getFormIsAcceptingResponses/:id", async (req, res) => {
+  try {
+    const form = await Form.findOne({ formID: req.params.id });
+    console.log(form);
+    if (form)
+      res
+        .status(200)
+        .json({ formIsAcceptingResponses: form.formIsAcceptingResponses });
+    else res.status(404).json({ msg: "Form not found." });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "See error message !", errorMsg: error.message });
+  }
+});
+ */
 mongoose
-  .connect(
-    "mongodb+srv://dbuser:SmafeO8gqwb7br8L@cluster0.kpfchi2.mongodb.net/formsDB?retryWrites=true&w=majority&appName=Cluster0"
-  )
+  .connect(process.env.MONGO_DB_URL)
   .then(() => {
     console.log("Connected to database.");
     app.listen(PORT, () => {

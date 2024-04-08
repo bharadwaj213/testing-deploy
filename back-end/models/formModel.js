@@ -22,6 +22,9 @@ const FormSchema = mongoose.Schema(
     formGroups: {
       type: [mongoose.Schema.Types.Mixed],
     },
+    formIsAcceptingResponses: {
+      type: Boolean,
+    },
   },
   {
     timestamps: true,
