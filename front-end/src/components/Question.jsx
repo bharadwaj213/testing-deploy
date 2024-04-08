@@ -4,7 +4,7 @@ import { useState } from "react";
 import SAQuestion from "./SAQuestion";
 
 function Question({ handleDeleteQuestion, id, content, updateQuestion }) {
-  const [questionType, setQuestionType] = useState(1);
+  const [questionType, setQuestionType] = useState(content.questionType);
 
   return (
     <div className="form-question">
@@ -43,7 +43,15 @@ function Question({ handleDeleteQuestion, id, content, updateQuestion }) {
                 <li>
                   <button
                     className="dropdown-item"
-                    onClick={(e) => setQuestionType(1)}
+                    onClick={() => {
+                      setQuestionType(1);
+                      updateQuestion({
+                        questionID: content.questionID,
+                        questionType: 1,
+                        question: "",
+                        options: [],
+                      });
+                    }}
                   >
                     Multiple Choice Question {/* id : 1 */}
                   </button>
@@ -51,7 +59,14 @@ function Question({ handleDeleteQuestion, id, content, updateQuestion }) {
                 <li>
                   <button
                     className="dropdown-item"
-                    onClick={(e) => setQuestionType(2)}
+                    onClick={() => {
+                      setQuestionType(2);
+                      updateQuestion({
+                        questionID: content.questionID,
+                        questionType: 2,
+                        question: "",
+                      });
+                    }}
                   >
                     Short Answer Question {/* id : 2 */}
                   </button>

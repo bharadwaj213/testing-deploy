@@ -87,3 +87,37 @@ nav {
 .question-mcq-type {
   padding-bottom: 2%;
 }
+
+.create-new-form,
+.all-forms-list-section {
+  padding: 3%;
+}
+
+.all-forms-list-section {
+  background-color: rgb(242, 242, 242);
+}
+
+.all-forms-heading {
+  margin-bottom: 25px;
+}
+
+.all-forms-heading,
+.all-forms-list {
+  padding: 1%;
+  background-color: #b9e1ea;
+  border-radius: 10px;
+}
+
+.form-list-item {
+  background-color: #95cdda;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  padding: 1%;
+  margin: 2%;
+}
+
+.form-title-list-item {
+  width: 100%;
+  cursor: pointer;
+}

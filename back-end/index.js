@@ -16,52 +16,74 @@ app.get("/", (req, res) => {
 
 app.post("/createNewForm", (req, res) => {
   const formID = randomstring.generate(7);
-  const formTitle = req.body.title;
-  const formDescription = req.body.description;
-  const questions = req.body.questions;
+  const formTitle = "";
+  const formDescription = "";
+  const formQuestions = [];
+  const formResponses = [];
+  const defaultGroupID = randomstring.generate(7);
+  const formGroups = [
+    {
+      groupID: defaultGroupID,
+      groupName: "",
+      groupLink: `http://localhost:5173/${formID}/${defaultGroupID}`,
+    },
+  ];
   formsData.push({
-    id: formID,
-    title: formTitle,
-    description: formDescription,
-    questions: questions,
-    responses: [],
+    formID: formID,
+    formTitle: formTitle,
+    formDescription: formDescription,
+    formQuestions: formQuestions,
+    formResponses: formResponses,
+    formGroups: formGroups,
   });
   console.log(formsData);
-  res.sendStatus(200);
+  res.status(200).json({ msg: "Form created.", formID: formID });
 });
 
-app.get("/getAllFormTitles", (req, res) => {
-  const allFormTitles = formsData.map((form) => form.title);
-  res.json(allFormTitles);
+// app.get("/getAllFormTitles", (req, res) => {
+//   const allFormTitles = formsData.map((form) => form.formTitle);
+//   res.status(200).json({allFormTitles: allFormTitles});
+// });
+
+app.get("/getAllFormTitlesIDs", (req, res) => {
+  const allFormTitlesIDs = formsData.map((form) => ({
+    formTitle: form.formTitle,
+    formID: form.formID,
+  }));
+  res.status(200).json({ allFormTitlesIDs: allFormTitlesIDs });
 });
 
 app.put("/deleteForm", (req, res) => {
-  const id = req.body.id;
-  formsData = formsData.filter((form) => form.id != id);
-  res.json({ msg: "Form deleted." });
+  // const id = req.body.formID;
+  // formsData = formsData.filter((form) => form.formID != id);
+  // res.json({ msg: "Form deleted." });
+  const id = req.body.formID;
+  const formIndex = formsData.findIndex((form) => form.formID === id);
+  if (formIndex !== -1) {
+    formsData.splice(formIndex, 1);
+    console.log(formsData);
+    res.status(200).json({ msg: "Form Deleted." });
+  } else res.status(404).json({ msg: "Form not found." });
 });
 
-app.get("/getFormData", (req, res) => {
-  const form = formsData.filter((form) => form.id == req.body.id);
-  res.json(form);
+app.get("/getFormData/:id", (req, res) => {
+  const form = formsData.filter((form) => form.formID === req.params.id);
+  if (form) res.status(200).json({ form: form[0] });
+  else res.status(404).json({ msg: "Form not found." });
 });
 
 app.put("/updateForm", (req, res) => {
-  const id = req.body.id;
-  const responses = formsData.filter((form) => form.id == id).responses;
-  formsData = formsData.filter((form) => form.id != id);
-  const formID = id;
-  const formTitle = req.body.title;
-  const formDescription = req.body.description;
-  const questions = req.body.questions;
-  formsData.push({
-    id: formID,
-    title: formTitle,
-    description: formDescription,
-    questions: questions,
-    responses: responses,
-  });
-  res.json(formsData);
+  const id = req.body.formID;
+  const formIndex = formsData.findIndex((form) => form.formID === id);
+  if (formIndex !== -1) {
+    formsData[formIndex].formTitle = req.body.formTitle;
+    formsData[formIndex].formDescription = req.body.formDescription;
+    formsData[formIndex].formQuestions = req.body.formQuestions;
+    formsData[formIndex].formGroups = req.body.formGroups;
+    console.log(formsData);
+    formsData.forEach((f) => console.log(f.formQuestions));
+    res.status(200).json({ msg: "Form updated." });
+  } else res.status(404).json({ msg: "Form not found." });
 });
 
 app.get("/getFormResponses", (req, res) => {
@@ -72,6 +94,21 @@ app.get("/getFormResponses", (req, res) => {
     questions: allQuestions,
     responses: allResponses,
   });
+});
+
+app.post("/createNewFormGroup", (req, res) => {
+  const id = req.body.formID;
+  const formIndex = formsData.findIndex((form) => form.formID === id);
+  if (formIndex !== -1) {
+    formsData[formIndex].formGroups = req.body.formGroups;
+    const defaultGroupID = randomstring.generate(7);
+    formsData[formIndex].formGroups.push({
+      groupID: defaultGroupID,
+      groupName: "",
+      groupLink: `http://localhost:5173/${id}/${defaultGroupID}`,
+    });
+    res.status(200).json({ msg: "New form group created." });
+  } else res.status(404).json({ msg: "Form not found." });
 });
 
 app.listen(PORT, () => {
@@ -89,6 +126,14 @@ app.listen(PORT, () => {
     {
         questionType: 2,
         question: "aasdasdf sfsda  fsdfa"
+    }
+]
+
+[
+    {
+        groupID: 5345,
+        groupName: "fsadfsdf",
+        groupLink: ".........."
     }
 ]
 
