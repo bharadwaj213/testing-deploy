@@ -8,13 +8,12 @@ function ResponseSubmitted() {
 
   const [formGroupLink, setFormGroupLink] = useState();
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        // `/api/admin/getFormGroupLink/$(formID}/${formGroupID}`,
-        `/api/user/getFormGroupLink/${formID}/${formGroupID}`,
-
-        // `http://localhost:3000/getFormGroupLink/${formGroupID}`,
+        `${BACKEND_URL}/user/getFormGroupLink/${formID}/${formGroupID}`,
         {
           method: "GET",
         }
@@ -35,7 +34,7 @@ function ResponseSubmitted() {
         </p>
         <a
           className="response-submitted-sar"
-          href={`http://localhost:5173/userform/${formID}/${formGroupID}`}
+          href={`${BACKEND_URL}/userform/${formID}/${formGroupID}`}
         >
           Submit another response
         </a>

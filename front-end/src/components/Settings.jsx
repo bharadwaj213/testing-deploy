@@ -12,13 +12,14 @@ function Settings({
   const [formIsAcceptingResponses, setFormIsAcceptingResponses] =
     useState(true);
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `/api/admin/getFormIsAcceptingResponses/${localStorage.getItem(
+        `${BACKEND_URL}/admin/getFormIsAcceptingResponses/${localStorage.getItem(
           "formID"
         )}`,
-        // `http://localhost:3000/getFormIsAcceptingResponses/${localStorage.getItem("formID")}`,
         {
           method: "GET",
         }
@@ -33,7 +34,7 @@ function Settings({
   const handleDeleteForm = async () => {
     const id = localStorage.getItem("formID");
 
-    const response = await fetch(`/api/admin/deleteForm/${id}`, {
+    const response = await fetch(`${BACKEND_URL}/admin/deleteForm/${id}`, {
       method: "DELETE",
     });
     const json = await response.json();
@@ -46,8 +47,7 @@ function Settings({
     setFormIsAcceptingResponses(formIsAcceptingResponses);
     const id = localStorage.getItem("formID");
     const response = await fetch(
-      `/api/admin/setIsAcceptingResponses`,
-      //`http://localhost:3000/setIsAcceptingResponses`,
+      `${BACKEND_URL}/admin/setIsAcceptingResponses`,
       {
         method: "POST",
         body: JSON.stringify({

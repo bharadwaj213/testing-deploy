@@ -31,7 +31,6 @@ export const saveUserFormResponse = async (req, res) => {
 };
 
 export const getGroupLink = async (req, res) => {
-  //app.get('/api/admin/getFormGroupLink/:formID/:formGroupID', async (req, res) => {
   try {
     const { formID, formGroupID } = req.params;
     const form = await Form.findOne({ formID });

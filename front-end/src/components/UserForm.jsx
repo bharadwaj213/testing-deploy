@@ -14,11 +14,12 @@ function UserForm() {
   });
   const navigate = useNavigate();
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `/api/admin/getFormData/${formID}`,
-        // `http://localhost:3000/getFormData/${formID}`,
+        `${BACKEND_URL}/admin/getFormData/${formID}`,
         {
           method: "GET",
         }
@@ -48,8 +49,7 @@ function UserForm() {
   };
 
   const handleSubmit = async () => {
-    //const response = await fetch("http://localhost:3000/saveUserFormResponse", {
-    const response = await fetch("/api/user/saveUserFormResponse", {
+    const response = await fetch(`${BACKEND_URL}/user/saveUserFormResponse`, {
       method: "POST",
       body: JSON.stringify({
         formID: formID,

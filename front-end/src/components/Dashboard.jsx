@@ -11,11 +11,15 @@ function Dashboard() {
   const [formResponses, setFormResponses] = useState([]);
   const [options, setOptions] = useState([]);
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `/api/admin/getSummaryDashboardData/${localStorage.getItem("formID")}`,
-        // `http://localhost:3000/getSummaryDashboardData/${localStorage.getItem("formID")}`,
+        `${BACKEND_URL}/admin/getSummaryDashboardData/${localStorage.getItem(
+          "formID"
+        )}`,
+
         {
           method: "GET",
         }

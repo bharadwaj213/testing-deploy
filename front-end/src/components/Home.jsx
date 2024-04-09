@@ -7,10 +7,14 @@ function Home() {
   const [allFormTitlesIDs, setAllFormTitlesIDs] = useState([]);
   const navigate = useNavigate();
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+  console.log(`${BACKEND_URL}/admin/getAllFormTitlesIDs`);
+
   useEffect(() => {
     localStorage.removeItem("formID");
     const fetchData = async () => {
-      const response = await fetch("/api/admin/getAllFormTitlesIDs", {
+      const response = await fetch(`${BACKEND_URL}/admin/getAllFormTitlesIDs`, {
         method: "GET",
       });
       const json = await response.json();
@@ -21,8 +25,7 @@ function Home() {
   }, []);
 
   const handleCreateNewForm = async () => {
-    const response = await fetch("/api/admin/createNewForm", {
-      //const response = await fetch("http://localhost:3000/createNewForm", {
+    const response = await fetch(`${BACKEND_URL}/admin/createNewForm`, {
       method: "GET",
     });
     const json = await response.json();
@@ -33,8 +36,7 @@ function Home() {
 
   const handleDeleteFormListItem = async (id) => {
     localStorage.removeItem("formID");
-    //const response = await fetch(`http://localhost:3000/deleteForm/${id}`, {
-    const response = await fetch(`/api/admin/deleteForm/${id}`, {
+    const response = await fetch(`${BACKEND_URL}admin/deleteForm/${id}`, {
       method: "DELETE",
     });
     const json = await response.json();

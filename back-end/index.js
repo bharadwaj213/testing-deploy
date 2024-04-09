@@ -14,10 +14,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get("/", async (req, res) => {
-  const forms = await Form.find({});
-  res.json(forms);
-});
+// app.get("/", async (req, res) => {
+//   const forms = await Form.find({});
+//   res.json(forms);
+// });
 
 /* app.get("/createNewForm", async (req, res) => {
   const formID = randomstring.generate(7);
@@ -53,8 +53,8 @@ app.get("/", async (req, res) => {
   }
 }); */
 
-app.use("/api/admin", adminRouter);
-app.use("/api/user", userRouter);
+app.use("/admin", adminRouter);
+app.use("/user", userRouter);
 
 app.get("/tests", (req, res) => {
   res.send("Test route is working!");

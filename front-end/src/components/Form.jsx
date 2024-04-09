@@ -20,12 +20,12 @@ function Form() {
   const [formDescription, setFormDescription] = useState("");
   const [formGroups, setFormGroups] = useState([]);
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `/api/admin/getFormData/${localStorage.getItem("formID")}`,
-
-        //`http://localhost:3000/getFormData/${localStorage.getItem("formID")}`,
+        `${BACKEND_URL}/admin/getFormData/${localStorage.getItem("formID")}`,
         {
           method: "GET",
         }
@@ -107,7 +107,7 @@ function Form() {
   const handleAddFormGroup = async () => {
     const id = localStorage.getItem("formID");
     const response = await fetch(
-      `/api/admin/createNewFormGroup/${id}`,
+      `${BACKEND_URL}/admin/createNewFormGroup/${id}`,
       //`http://localhost:3000/createNewFormGroup/${id}`,
       {
         method: "GET",
@@ -127,7 +127,7 @@ function Form() {
   const handleSave = async () => {
     const id = localStorage.getItem("formID");
     const response = await fetch(
-      `/api/admin/updateForm`,
+      `${BACKEND_URL}/admin/updateForm`,
       //"http://localhost:3000/updateForm"
       {
         method: "PUT",
